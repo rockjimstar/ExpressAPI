@@ -1,3 +1,4 @@
+/*
 var express = require('express');
 var app = express();
 var path = require('path');
@@ -22,5 +23,16 @@ app.use(function(err, res, req, next){
 		res.status(500).send(err);
 	}
 });
+*/
+var express = require('express');
+var app = express();
+var api = require('./api/api');
+
+
+require('./middleware/appMiddleware')(app);
+
+
+app.use('/api', api);
+
 
 module.exports = app;

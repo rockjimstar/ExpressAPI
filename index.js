@@ -1,5 +1,7 @@
+var config = require('./server/config/config');
 var app = require('./server/server');
 
-app.listen(3000, function(){
-	console.log('Running on port 3000!');
-});
+var logger = require('./server/util/logger');
+
+app.listen(config.port);
+logger.log('listening on http://localhost:' + config.port);
