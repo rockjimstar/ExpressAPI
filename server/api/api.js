@@ -1,12 +1,7 @@
 var router = require('express').Router();
 
-var userRouter = require('./user/userRouter');
-var categoryRouter = require('./category/categoryRouter');
-var postRouter = require('./post/postRouter');
-
-router.use('/users', userRouter);
-router.use('/categories', categoryRouter);
-router.use('/posts', postRouter);
-
+router.use('/users', require('./user/userRouter'));
+router.use('/categories', require('./category/categoryRouter'));
+router.use('/posts', require('./post/postRouter'));
 
 module.exports = router;
