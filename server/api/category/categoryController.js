@@ -49,7 +49,7 @@ exports.put = function(req, res, next){
 exports.post = function(req, res, next){
 	var newCategory = req.body;
 
-	Category.Create(newCategory)
+	Category.create(newCategory)
 		.then(function(category){
 			res.json(category);
 		}, function(err){

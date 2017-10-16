@@ -1,6 +1,7 @@
 var Post = require('./postModel');
 var _ = require('lodash');
 
+/*
 exports.params = function(req, res, next, id){
 	Post.findById(id)
 		.populate('author categories')
@@ -17,10 +18,12 @@ exports.params = function(req, res, next, id){
 			next(err);
 		});
 };
+*/
 
 exports.get = function(req, res, next){
 	Post.find({})
-		.populate('author categories')
+		.populate('author', 'username')
+		.populate('categories')
 		.exec()
 		.then(function(posts){
 			res.json(posts);
@@ -30,17 +33,25 @@ exports.get = function(req, res, next){
 };
 
 exports.getOne = function(req, res, next){
-	res.json(req.post);
+	Post.findById(req.params.id)
+		.populate('author', 'username')
+		.populate('categories')
+		.exec()
+		.then(function(post){
+			if(!post){
+				next(new Error('No post with that id'));
+			}
+			else{
+				res.json(post);
+			}
+		}, function(err){
+			next(err);
+		});
 };
 
 exports.put = function(req, res, next){
-	var post = req.post;
 
-	var update = req.body;
-
-	_.merge(post, update);
-
-	post.save(function(err, saved){
+	Post.findByIdAndUpdate(req.params.id, req.body, {new: true}, function(err, saved){
 		if(err){
 			next(err);
 		}
@@ -48,12 +59,36 @@ exports.put = function(req, res, next){
 			res.json(saved);
 		}
 	});
+	/*
+	Post.findById(req.params.id)
+		.then(function(post){
+			if(!post){
+				next(new Error('No post with that id'));
+			}
+			else{
+
+				var updatedPost = _.merge(post, req.body);
+
+				updatedPost.save(function(err, saved){
+					if(err){
+						res.send(err);
+						next(err);
+					}
+					else{
+						res.json(saved);
+					}
+				});
+			}
+		}, function(err){
+			next(err);
+		});
+		*/
 };
 
 exports.post = function(req, res, next){
 	var newPost = req.body;
 
-	Post.Create(newPost)
+	Post.create(newPost)
 		.then(function(post){
 			res.json(post);
 		}, function(err){

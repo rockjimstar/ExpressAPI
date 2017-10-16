@@ -1,12 +1,31 @@
 var express = require('express');
 var app = express();
 var api = require('./api/api');
-var err = require('./middleware/err');
+var config = require('./config/config');
+var logger = require('./util/logger');
+var auth = require('./auth/routes');
+
+require('mongoose').connect(config.db.url);
+
+
+if(config.seed){
+	require('./util/seed');
+}
+
 
 require('./middleware/appMiddleware')(app);
 
 app.use('/api', api);
+app.use('/auth', auth);
 
-app.use(err());
+app.use(function(err, req, res, next){
+	if(err.name === 'UnauthorizedError'){
+		res.status(401).send('Invalid Token');
+		return;
+	}
+
+	logger.error(err.stack);
+	res.status(500).send('Oops');
+});
 
 module.exports = app;
